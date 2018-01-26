@@ -6,6 +6,7 @@
                     <div *ngFor="let task of tasks">
                         <mat-card *ngIf="task.status == 'to do'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
                             <mat-card-title>{{task.title}}</mat-card-title>
+                            <mat-card-content>{{task.description}}</mat-card-content>
                             <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
                         </mat-card>
                     </div>
@@ -17,6 +18,7 @@
                     <div *ngFor="let task of tasks"> 
                         <mat-card *ngIf="task.status == 'doing'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
                             <mat-card-title>{{task.title}}</mat-card-title>
+                            <mat-card-content>{{task.description}}</mat-card-content>
                             <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
                         </mat-card>
                     </div>
@@ -28,6 +30,7 @@
                     <div *ngFor="let task of tasks">
                         <mat-card *ngIf="task.status == 'done'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
                             <mat-card-title>{{task.title}}</mat-card-title>
+                            <mat-card-content>{{task.description}}</mat-card-content>
                             <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
                         </mat-card>
                     </div>
