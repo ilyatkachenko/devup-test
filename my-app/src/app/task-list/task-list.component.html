@@ -1,0 +1,104 @@
+<mat-card class="task-list">
+    <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <h3 class="status-title">to do</h3>
+                <div class="task-wrap" droppable (onDrop)="onItemDrop($event, 'to do')">
+                    <div *ngFor="let task of tasks">
+                        <mat-card *ngIf="task.status == 'to do'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
+                            <mat-card-title>{{task.title}}</mat-card-title>
+                            <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <h3 class="status-title">doing</h3>
+                <div class="task-wrap" droppable (onDrop)="onItemDrop($event, 'doing')">
+                    <div *ngFor="let task of tasks"> 
+                        <mat-card *ngIf="task.status == 'doing'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
+                            <mat-card-title>{{task.title}}</mat-card-title>
+                            <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <h3 class="status-title">done</h3>
+                <div class="task-wrap" droppable (onDrop)="onItemDrop($event, 'done')">
+                    <div *ngFor="let task of tasks">
+                        <mat-card *ngIf="task.status == 'done'" class="task-card" (click)="openUpdateForm(content2,task)" draggable [dragData]="task">
+                            <mat-card-title>{{task.title}}</mat-card-title>
+                            <button mat-raised-button color="warn" (click)="removeTask(task.id)">Delete</button>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12">
+                <button class="add-btn" mat-raised-button color="primary" (click)="openNewTaskForm(content)">add new task</button>
+            </div>
+    </div>
+</mat-card>
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">New task</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+            <form novalidate [formGroup]="addNewTaskform" (submit)="addTask($event)">
+                    <mat-form-field class="example-full-width">
+                        <input matInput formControlName="title" placeholder="Add Task..." required>
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <textarea matInput formControlName="description" placeholder="Description..." matTextareaAutosize matAutosizeMinRows="1"
+                                    matAutosizeMaxRows="3"></textarea>
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <mat-select placeholder="Task status" formControlName="status" required>
+                            <mat-option *ngFor="let status of statuses" [value]="status.value">
+                            {{ status.value }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button class="float-right submit-btn" type="submit" mat-raised-button color="primary">Submit</button>
+                </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+    </div>
+</ng-template>
+<ng-template #content2 let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Task details</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+            <form novalidate [formGroup]="updateform" (submit)="updateTask($event)" class="example-form">
+                    <mat-form-field class="example-full-width hide">
+                        <input matInput formControlName="id" placeholder="Id task...">
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <input matInput formControlName="title" placeholder="Add Task..." required>
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <textarea matInput formControlName="description" placeholder="Description..." matTextareaAutosize matAutosizeMinRows="1"
+                                    matAutosizeMaxRows="3"></textarea>
+                    </mat-form-field>
+                    <mat-form-field class="example-full-width">
+                        <mat-select placeholder="Task status" formControlName="status" required>
+                            <mat-option *ngFor="let status of statuses" [value]="status.value">
+                            {{ status.value }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button mat-raised-button color="warn" (click)="removeTask(this.updateform.value.id)">Delete</button>
+                    <button class="float-right submit-btn" type="submit" mat-raised-button color="primary">Submit</button>
+                </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+    </div>
+</ng-template>

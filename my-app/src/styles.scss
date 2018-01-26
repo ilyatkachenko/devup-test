@@ -1,0 +1,11 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~ng2-drag-drop/style.css";
+
+.modal-backdrop {
+    z-index: 5;
+}
+
+.modal {
+    z-index: 10;
+}

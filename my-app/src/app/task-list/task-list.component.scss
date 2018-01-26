@@ -1,0 +1,31 @@
+.status-title{
+    text-transform: uppercase;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+}
+
+.add-btn{
+    margin-top: 20px;
+}
+
+.example-full-width {
+    width: 100%;
+
+    &.hide{
+        display: none;
+    }
+}
+
+.task-wrap{
+    min-height: 136px;
+}
+
+.task-card{
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.float-right{
+    float: right;
+}
