@@ -1,0 +1,22 @@
+<mat-card class="form">
+  <a routerLink="/login" id="goback">Go back</a>
+
+  <h3 class="title">Join now</h3>
+
+  <span class="error" *ngIf="error">{{ error }}</span>
+    
+  <form novalidate [formGroup]="register" (submit)="onSubmit($event)">
+
+      <mat-form-field class="example-full-width">
+          <input type="text" matInput formControlName="email" placeholder="Email address.." name="email" required>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+          <input type="password" matInput formControlName="password"  placeholder="Password" name="password" required>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input type="text" matInput formControlName="name"  placeholder="Name" name="name" required>
+    </mat-form-field>
+  
+    <button  mat-raised-button color="primary" type="submit" class="basic-btn">Create my account</button>
+  </form>
+</mat-card>

@@ -1,53 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
-import {Tasks} from '../Tasks';
+import { Tasks } from '../Tasks';
+import * as firebase from 'firebase/app';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 
 @Injectable()
 export class TasksService {
-  private nextId : number;
-  constructor() {
-    let tasks = this.getTask();
+  private nextId: number;
+  userId: string;
+  taskRef: AngularFirestoreDocument<any>;
+  user;
+  items;
 
-    if(tasks.length == 0){
+  constructor(private afAuth: AngularFireAuth,
+    private afs: AngularFirestore) {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        this.taskRef = this.afs.doc(`tasks/${this.userId}`);
+
+        this.afs.doc(`tasks/${this.userId}`).valueChanges().subscribe(success => {
+          if (success) {
+            this.user = success;
+            this.items = this.user.tasks;
+          }
+        });
+      }
+    });
+  }
+
+  public addTask(task: any): void {
+    let taskObj = task;
+
+    if (!this.items) {
       this.nextId = 0;
-    }else {
-      let maxId = tasks[tasks.length - 1].id;
+    } else {
+      let maxId = this.items[this.items.length - 1].id;
       this.nextId = maxId + 1;
     }
-   }
 
-  public addTask(title: string, description: string, status: string) : void{
-    let task = new Tasks(this.nextId, title, description, status);
-    let tasks = this.getTask();
-    tasks.push(task);
-    this.setTask(tasks);
+    taskObj.id = this.nextId;
+    let tasksArr = this.items ? this.items : [];
+    tasksArr.push(taskObj);
+    this.taskRef.update({ tasks: tasksArr });
     this.nextId++;
   }
 
-  public updateTask(id: number, title: string, description: string, status: string) : void{
-    let tasks = this.getTask();
-    tasks.forEach((task) => {
-      if(task.id == id){
-        task.title = title;
-        task.description = description;
-        task.status = status;
+  public updateTask(task: any): void {
+    this.items.map((item, i, arr) => {
+      if (item.id == task.id) {
+        return arr.splice(i, 1, task);
       }
     });
-    this.setTask(tasks);
+    this.taskRef.update({ tasks: this.items });
   }
 
-  public getTask(): Tasks[]{
-    let localStorageItem = JSON.parse(localStorage.getItem('tasks'));
-    return localStorageItem == null ? [] : localStorageItem.tasks;
+  public removeTask(id: number): void {
+    let arr = this.items.filter((task, i, arr) => task.id != id);
+    this.taskRef.update({ tasks: arr });
   }
 
-  public removeTask(id: number): void{
-    let tasks = this.getTask();
-    tasks = tasks.filter((task) => task.id != id);
-    this.setTask(tasks);
-  }
-
-  public setTask(tasks: Tasks[]) : void{
-    localStorage.setItem('tasks', JSON.stringify({tasks: tasks}));
+  public dragNdrop(tasks: any, e: any, taskStatus: string){
+    tasks.forEach((task) => {
+      if (task.id == e.dragData.id) {
+        task.status = taskStatus;
+      }
+    });
+    this.taskRef.update({ tasks: tasks });
   }
 }

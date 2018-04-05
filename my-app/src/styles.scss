@@ -9,3 +9,19 @@
 .modal {
     z-index: 10;
 }
+
+html{
+    height: 100%;
+    line-height: inherit;
+}
+
+.mat-raised-button.mat-primary {
+    background-color: #3480c1;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+    height: 100%;
+    line-height: inherit;
+    background: linear-gradient(90deg, rgba(255, 0, 0, 0.7), rgba(0, 100, 255, 0.7)) repeat scroll 0% 0% transparent;
+}

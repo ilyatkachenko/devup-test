@@ -1,0 +1,19 @@
+<mat-card class="form">
+  <a routerLink="/login" id="goback">Go back</a>
+  <h2>Custom Login</h2>
+
+  <span class="error" *ngIf="error">{{ error }}</span>
+
+  <form novalidate [formGroup]="login" (submit)="onSubmit($event)">
+
+    <mat-form-field class="example-full-width">
+      <input type="text" matInput formControlName="email" placeholder="Email address.." name="email" required>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input type="password" matInput formControlName="password" placeholder="Password" name="password" required>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" class="basic-btn">Log in</button>
+  </form>
+  <a routerLink="/signup" class="register">Don't have an account?</a>
+</mat-card>

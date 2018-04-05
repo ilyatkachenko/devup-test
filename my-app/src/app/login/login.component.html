@@ -1,0 +1,14 @@
+<mat-card class="form">
+  <h3 class="title">Welcome to Task Manager</h3>
+
+  <span class="error" *ngIf="auth.error">{{ auth.error }}</span>
+
+  <button mat-raised-button (click)="auth.facebookLogin()" class="button fb"><span class="button__title">Login With Facebook</span></button>
+  <button mat-raised-button (click)="auth.githubLogin()" class="button github"><span class="button__title">Login With Github</span></button>
+  <button mat-raised-button (click)="auth.googleLogin()" class="button google"><span class="button__title">Login With Google</span></button>
+  <button mat-raised-button routerLink="/login-email" class="button email"><span class="button__title">Email</span></button>
+
+  <a routerLink="/signup" routerLinkActive="active" class="register">No account?
+    <strong>Create one here</strong>
+  </a>
+</mat-card>

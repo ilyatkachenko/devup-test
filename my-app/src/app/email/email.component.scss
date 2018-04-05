@@ -1,0 +1,31 @@
+.form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 470px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    .title{
+        align-self: center;
+        margin-bottom: 20px;
+    }
+
+    .example-full-width{
+        width: 100%;
+    }
+
+    .basic-btn{
+        line-height: 1;
+        width: 100%;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+    }
+
+    .register{
+        align-self: center;
+        line-height: 1;
+    }
+}

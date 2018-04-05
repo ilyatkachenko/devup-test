@@ -1,41 +1,52 @@
 import { Component, OnInit } from '@angular/core';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
-import {FormGroup, FormControl, Validators} from '@angular/forms';
-import {TasksService} from '../services/tasks.service';
-import {Tasks} from '../Tasks';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
+import { TasksService } from '../../services/tasks.service';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { Tasks } from '../../Tasks';
+import { Observable } from '@firebase/util';
 
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
+
 export class TaskListComponent implements OnInit {
   closeResult: string;
   addNewTaskModal: any;
   addUpdateModal: any;
-  tasks: Tasks[];
+  tasks: any;
+  user: any;
   addNewTaskform: FormGroup;
   updateform: FormGroup;
   statuses = [
-    {value: 'to do'},
-    {value: 'doing'},
-    {value: 'done'}
+    { value: 'to do' },
+    { value: 'doing' },
+    { value: 'done' }
   ];
 
-  constructor(private modalService: NgbModal, private tasksService: TasksService) { 
-    this.tasks = this.tasksService.getTask();
-  }
+  constructor(private modalService: NgbModal,
+    private tasksService: TasksService,
+    public afAuth: AngularFireAuth,
+    private afs: AngularFirestore) { }
 
   addTask(event) {
     event.preventDefault();
-
     let title = this.addNewTaskform.value.title;
     let description = this.addNewTaskform.value.description;
     let status = this.addNewTaskform.value.status;
 
-    if(this.addNewTaskform.controls.title.valid == true && this.addNewTaskform.controls.status.valid == true){
-      this.tasksService.addTask(title, description, status);
-      this.tasks = this.tasksService.getTask();
+    const task = {
+      title: title,
+      description: description,
+      status: status
+    }
+    if (this.addNewTaskform.controls.title.valid == true && this.addNewTaskform.controls.status.valid == true) {
+      this.tasksService.addTask(task);
+      this.addNewTaskform.reset();
       this.addNewTaskModal.close();
     }
   }
@@ -48,16 +59,22 @@ export class TaskListComponent implements OnInit {
     let description = this.updateform.value.description;
     let status = this.updateform.value.status;
 
-    if(this.updateform.controls.title.valid == true && this.updateform.controls.status.valid == true && this.updateform.controls.id.valid == true){
-      this.tasksService.updateTask(id, title, description, status);
-      this.tasks = this.tasksService.getTask();
+    const task = {
+      id: id,
+      title: title,
+      description: description,
+      status: status
+    }
+
+    if (this.updateform.controls.title.valid == true && this.updateform.controls.status.valid == true && this.updateform.controls.id.valid == true) {
+      this.tasksService.updateTask(task);
       this.addUpdateModal.close();
     }
   }
 
-  removeTask(id){
+  removeTask(id, event) {
+    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble=true);
     this.tasksService.removeTask(id);
-    this.tasks = this.tasksService.getTask();
   }
 
   openNewTaskForm(content) {
@@ -89,32 +106,38 @@ export class TaskListComponent implements OnInit {
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
       return 'by clicking on a backdrop';
     } else {
-      return  `with: ${reason}`;
+      return `with: ${reason}`;
     }
   }
 
   onItemDrop(e: any, taskStatus: string) {
-    this.tasks.forEach((task) => {
-      if(task.id == e.dragData.id){
-        task.status = taskStatus;
+    this.tasksService.dragNdrop(this.tasks, e, taskStatus);
+  }
+
+  ngOnInit() {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.afs.doc(`tasks/${user.uid}`).valueChanges().subscribe(success => {
+          if (success) {
+            this.user = success;
+            this.tasks = this.user.tasks;
+          }
+        });
       }
     });
-    this.tasksService.setTask(this.tasks);
-}
-  
-  ngOnInit() {
+
     this.addNewTaskform = new FormGroup({
       title: new FormControl('', Validators.required),
       description: new FormControl(),
       status: new FormControl('', Validators.required),
-    }, {updateOn: 'submit'});
+    }, { updateOn: 'submit' });
 
     this.updateform = new FormGroup({
       id: new FormControl('', Validators.required),
       title: new FormControl('', Validators.required),
       description: new FormControl(),
       status: new FormControl('', Validators.required),
-    }, {updateOn: 'submit'});
+    }, { updateOn: 'submit' });
   }
 
 }
